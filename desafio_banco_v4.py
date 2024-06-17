@@ -138,9 +138,6 @@ class ContaCorrente(Conta):
 
         elif excedeu_saques:
             print("\nOperação não realizada. Número máximo de saques excedido!")
-        
-        elif ValueError:
-            print("\nErro, Digite apenas numeros")
 
         else:
             return super().sacar(valor)
@@ -219,15 +216,13 @@ class Deposito(Transacao):
 
         if sucesso_transacao:
             conta.historico.adicionar_transacao(self)
-        else:
-            print('again')
 
 
 def log_transacao(log):
     def envelope(*args, **kwargs):
-            now = datetime.now().strftime("%d/%m/%Y, %H:%M:%S.")
+            now = datetime.now().strftime("%d/%m/%Y - %H:%M:%S.")
             resultado = log(*args, **kwargs)
-            print(f"Tipo de operação: {log.__name__.upper()}, Data: {now}")
+            print(f"{log.__name__.upper()}, - {now}")
             return resultado
     return envelope
 
@@ -297,15 +292,16 @@ def exibir_extrato(clientes):
     print("\n", "="*10, "EXTRATO", "="*10)
     extrato = ""
     tem_transacao = False
-    for transacao in conta.historico.gerar_relatorio(tipo_transacao="saque"):
+ 
+    for transacao in conta.historico.gerar_relatorio(tipo_transacao=None):
         tem_transacao = True
-        extrato += f"\n{transacao['tipo']}:\tR$ {transacao['valor']:.2f}\n{now}"
-
+        extrato += f"\n{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f} - {now}\n"
+    
     if not tem_transacao:
         extrato = "Não foram realizadas movimentações"
 
     print(extrato)
-    print(f"\nSaldo:\tR$ {conta.saldo:.2f}")
+    print(f"\nSaldo:\tR$ {conta.saldo:.2f}", sep='')
     print("="*25)
 
 @log_transacao
